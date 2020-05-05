@@ -53,6 +53,9 @@ COPY startup.sh /usr/local/tomcat/startup.sh
 RUN chmod +x /usr/local/tomcat/wait-for-it.sh
 RUN chmod +x /usr/local/tomcat/startup.sh
 
+# Add Dockerfile and commit info for documentation
+ADD Dockerfile /openmrs/docker
+
 EXPOSE 8080
 
 CMD ["/usr/local/tomcat/startup.sh"]
