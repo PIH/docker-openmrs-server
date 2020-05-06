@@ -64,18 +64,18 @@ EOF
 
 echo "Writing out $TOMCAT_SETENV_FILE file"
 
-cat > $TOMCAT_SETENV_FILE << EOF
-export JAVA_OPTS="$OMRS_JAVA_SERVER_OPTS $OMRS_JAVA_MEMORY_OPTS"
-export CATALINA_OPTS="-DOPENMRS_INSTALLATION_SCRIPT=$OMRS_SERVER_PROPERTIES_FILE -DOPENMRS_APPLICATION_DATA_DIRECTORY=$OMRS_DATA_DIR/"
-EOF
+JAVA_OPTS="$OMRS_JAVA_SERVER_OPTS $OMRS_JAVA_MEMORY_OPTS"
+CATALINA_OPTS="-DOPENMRS_INSTALLATION_SCRIPT=$OMRS_SERVER_PROPERTIES_FILE -DOPENMRS_APPLICATION_DATA_DIRECTORY=$OMRS_DATA_DIR/"
 
-# Applying developer settings
-
-if [ -z "$OMRS_DEV_DEBUG_PORT" ]; then
-  echo "Configuring debugger on port $OMRS_DEV_DEBUG_PORT"
-  export JPDA_ADDRESS="$OMRS_DEV_DEBUG_PORT"
-  export JPDA_TRANSPORT=dt_socket
+if [ ! -z "$OMRS_DEV_DEBUG_PORT" ]; then
+  echo "Enabling debugging on port $OMRS_DEV_DEBUG_PORT"
+  CATALINA_OPTS="$CATALINA_OPTS -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=$OMRS_DEV_DEBUG_PORT"
 fi
+
+cat > $TOMCAT_SETENV_FILE << EOF
+export JAVA_OPTS="$JAVA_OPTS"
+export CATALINA_OPTS="$CATALINA_OPTS"
+EOF
 
 echo "Waiting for MySQL to initialize..."
 
@@ -83,7 +83,7 @@ echo "Waiting for MySQL to initialize..."
 
 echo "Starting up OpenMRS..."
 
-/usr/local/tomcat/bin/catalina.sh jpda run &
+/usr/local/tomcat/bin/catalina.sh run &
 
 # Trigger first filter to start data importation
 sleep 15
