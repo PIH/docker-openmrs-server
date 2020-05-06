@@ -1,4 +1,4 @@
-FROM tomcat:7-jre7
+FROM tomcat:7-jre8
 
 # Take some initial steps to improve overall security, size, and functionality of the container
 # This includes updating packages and removing all of the default Tomcat webapps
