@@ -36,19 +36,54 @@ The below is a list of supported enviroment variables, along with their default 
 * OMRS_CONFIG_ADD_DEMO_DATA: ```false```
 * OMRS_CONFIG_ADMIN_USER_PASSWORD: ```Admin123```
 * OMRS_CONFIG_AUTO_UPDATE_DATABASE: ```false```
+* OMRS_CONFIG_CONNECTION_TYPE: ```mysql```
 * OMRS_CONFIG_CONNECTION_DRIVER_CLASS: ```com.mysql.jdbc.Driver```
 * OMRS_CONFIG_CONNECTION_USERNAME: ```openmrs```
 * OMRS_CONFIG_CONNECTION_PASSWORD: ```openmrs```
-* OMRS_CONFIG_CONNECTION_SERVER: ```db```
-* OMRS_CONFIG_CONNECTION_PORT: ```3306```
+* OMRS_CONFIG_CONNECTION_SERVER: ```localhost```
 * OMRS_CONFIG_CONNECTION_NAME: ```openmrs```
-* OMRS_CONFIG_CONNECTION_ARGS: ```autoReconnect=true&sessionVariables=storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8```
-* OMRS_CONFIG_CONNECTION_EXTRA_ARGS: ``````
 * OMRS_CONFIG_CREATE_DATABASE_USER: ```false```
 * OMRS_CONFIG_CREATE_TABLES: ```false```
 * OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE: ```true```
 * OMRS_CONFIG_INSTALL_METHOD: ```auto```
 * OMRS_CONFIG_MODULE_WEB_ADMIN: ```true```
+
+**Database settings**
+
+Most of the default database configuration is driven off the ```OMRS_CONFIG_CONNECTION_TYPE``` environment variable,
+which includes defaults for MySQL and PostgreSQL. However, the following properties can be overridden to customize the
+connection:
+
+*MySQL Defaults:*
+
+* OMRS_CONFIG_CONNECTION_DRIVER_CLASS: ```com.mysql.jdbc.driver```
+* OMRS_CONFIG_JDBC_URL_PROTOCOL: ```mysql```
+* OMRS_CONFIG_CONNECTION_PORT: ```3306```
+* OMRS_CONFIG_CONNECTION_ARGS: ```?autoReconnect=true&sessionVariables=storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8```
+* OMRS_CONFIG_CONNECTION_EXTRA_ARGS: ```""```
+
+NB If you are using MySQL on platform 2.4 or later you **must** change the ```OMRS_CONFIG_CONNECTION_DRIVER_CLASS``` variable to ```com.mysql.cj.jdbc.Driver```.
+
+*PostgreSQL Defaults:*
+
+* OMRS_CONFIG_CONNECTION_DRIVER_CLASS: ```org.postgresql.Driver```
+* OMRS_CONFIG_JDBC_URL_PROTOCOL: ```postgres```
+* OMRS_CONFIG_CONNECTION_PORT: ```5432```
+* OMRS_CONFIG_CONNECTION_ARGS: ```""```
+* OMRS_CONFIG_CONNECTION_EXTRA_ARGS: ```""```
+
+Finally, the entire JDBC URL can be customized by setting the ```OMRS_CONFIG_CONNECTION_URL``` environment variable. The default value is:
+
+* OMRS_CONFIG_CONNECTION_URL: ```jdbc:$OMRS_CONFIG_JDBC_URL_PROTOCOL://$OMRS_CONFIG_CONNECTION_SERVER:$OMRS_CONFIG_CONNECTION_PORT/${OMRS_CONFIG_CONNECTION_DATABASE}?${OMRS_CONFIG_CONNECTION_PARAMETERS}```
+
+For MySQL the default connection URL is:
+
+```jdbc:mysql://localhost:3306/openmrs?autoReconnect=true&sessionVariables=storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8```
+
+For PostgreSQL the default connection URL is:
+
+```jdbc:postgres://localhost:5432/openmrs```
+
 
 **Enable debugging by specifying port**
 
