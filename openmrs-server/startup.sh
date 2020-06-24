@@ -5,6 +5,7 @@ echo "Initiating OpenMRS startup"
 # This startup script is responsible for fully preparing the OpenMRS Tomcat environment.
 
 OMRS_HOME="/openmrs"
+OMRS_WEBAPP_NAME=${OMRS_WEBAPP_NAME:-openmrs}
 
 # A volume mount is expected that contains distribution artifacts.  The expected format is shown in these environment vars.
 
@@ -21,7 +22,7 @@ OMRS_MODULES_DIR="$OMRS_DATA_DIR/modules"
 OMRS_OWA_DIR="$OMRS_DATA_DIR/owa"
 OMRS_CONFIG_DIR="$OMRS_DATA_DIR/configuration"
 
-OMRS_SERVER_PROPERTIES_FILE="$OMRS_HOME/openmrs-server.properties"
+OMRS_SERVER_PROPERTIES_FILE="$OMRS_HOME/$OMRS_WEBAPP_NAME-server.properties"
 
 TOMCAT_DIR="/usr/local/tomcat"
 TOMCAT_WEBAPPS_DIR="$TOMCAT_DIR/webapps"
