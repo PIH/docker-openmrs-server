@@ -14,7 +14,7 @@ RUN sed -i '/Connector port="8080"/a URIEncoding="UTF-8" relaxedPathChars="[]|" 
 # for clarity.  These list the variables supported, and the default values if not overridden
 
 # These environment variables are appended to configure the Tomcat JAVA_OPTS
-ENV OMRS_JAVA_MEMORY_OPTS="-Xmx2048m -Xms1024m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:NewSize=128m"
+ENV OMRS_JAVA_MEMORY_OPTS="-Xmx2048m -Xms1024m -XX:NewSize=128m"
 ENV OMRS_JAVA_SERVER_OPTS="-Dfile.encoding=UTF-8 -server -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Djava.awt.headlesslib=true"
 
 # These environment variables are used to create the openmrs-server.properties file, which controls how OpenMRS initializes
