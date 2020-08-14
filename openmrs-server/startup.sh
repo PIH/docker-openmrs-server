@@ -56,7 +56,7 @@ if [[ -z $OMRS_CONFIG_DATABASE || "$OMRS_CONFIG_DATABASE" == "mysql" ]]; then
   OMRS_CONFIG_JDBC_URL_PROTOCOL=mysql
   OMRS_CONFIG_CONNECTION_DRIVER_CLASS="${OMRS_CONFIG_CONNECTION_DRIVER_CLASS:-com.mysql.jdbc.Driver}"
   OMRS_CONFIG_CONNECTION_PORT="${OMRS_CONFIG_CONNECTION_PORT:-3306}"
-  OMRS_CONFIG_CONNECTION_ARGS="${OMRS_CONFIG_CONNECTION_ARGS:-autoReconnect=true&sessionVariables=default_storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8}"
+  OMRS_CONFIG_CONNECTION_ARGS="${OMRS_CONFIG_CONNECTION_ARGS:-?autoReconnect=true&sessionVariables=default_storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8}"
 elif [[ "$OMRS_CONFIG_DATABASE" == "postgresql" ]]; then
   OMRS_CONFIG_JDBC_URL_PROTOCOL=postgresql
   OMRS_CONFIG_CONNECTION_DRIVER_CLASS="${OMRS_CONFIG_CONNECTION_DRIVER_CLASS:-org.postgresql.Driver}"
