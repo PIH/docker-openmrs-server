@@ -5,6 +5,7 @@ echo "Initiating OpenMRS startup"
 # This startup script is responsible for fully preparing the OpenMRS Tomcat environment.
 
 OMRS_HOME="/openmrs"
+OMRS_WEBAPP_NAME=${OMRS_WEBAPP_NAME:-openmrs}
 
 # A volume mount is expected that contains distribution artifacts.  The expected format is shown in these environment vars.
 
@@ -21,7 +22,7 @@ OMRS_MODULES_DIR="$OMRS_DATA_DIR/modules"
 OMRS_OWA_DIR="$OMRS_DATA_DIR/owa"
 OMRS_CONFIG_DIR="$OMRS_DATA_DIR/configuration"
 
-OMRS_SERVER_PROPERTIES_FILE="$OMRS_HOME/openmrs-server.properties"
+OMRS_SERVER_PROPERTIES_FILE="$OMRS_HOME/$OMRS_WEBAPP_NAME-server.properties"
 
 TOMCAT_DIR="/usr/local/tomcat"
 TOMCAT_WEBAPPS_DIR="$TOMCAT_DIR/webapps"
@@ -44,6 +45,32 @@ cp -r $OMRS_DISTRO_WEBAPPS $TOMCAT_WEBAPPS_DIR
 [ -d "$OMRS_DISTRO_MODULES" ] && cp -r $OMRS_DISTRO_MODULES $OMRS_MODULES_DIR
 [ -d "$OMRS_DISTRO_OWAS" ] && cp -r $OMRS_DISTRO_OWAS $OMRS_OWA_DIR
 [ -d "$OMRS_DISTRO_CONFIG" ] && cp -r $OMRS_DISTRO_CONFIG $OMRS_CONFIG_DIR
+
+# setup database configuration properties
+# Setup database configuration properties
+OMRS_CONFIG_DATABASE="${OMRS_CONFIG_DATABASE:-mysql}"
+OMRS_CONFIG_CONNECTION_SERVER="${OMRS_CONFIG_CONNECTION_SERVER:-localhost}"
+OMRS_CONFIG_CONNECTION_DATABASE="${OMRS_CONFIG_CONNECTION_DATABASE:-openmrs}"
+
+if [[ -z $OMRS_CONFIG_DATABASE || "$OMRS_CONFIG_DATABASE" == "mysql" ]]; then
+  OMRS_CONFIG_JDBC_URL_PROTOCOL=mysql
+  OMRS_CONFIG_CONNECTION_DRIVER_CLASS="${OMRS_CONFIG_CONNECTION_DRIVER_CLASS:-com.mysql.jdbc.Driver}"
+  OMRS_CONFIG_CONNECTION_PORT="${OMRS_CONFIG_CONNECTION_PORT:-3306}"
+  OMRS_CONFIG_CONNECTION_ARGS="${OMRS_CONFIG_CONNECTION_ARGS:-?autoReconnect=true&sessionVariables=default_storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8}"
+elif [[ "$OMRS_CONFIG_DATABASE" == "postgresql" ]]; then
+  OMRS_CONFIG_JDBC_URL_PROTOCOL=postgresql
+  OMRS_CONFIG_CONNECTION_DRIVER_CLASS="${OMRS_CONFIG_CONNECTION_DRIVER_CLASS:-org.postgresql.Driver}"
+  OMRS_CONFIG_CONNECTION_PORT="${OMRS_CONFIG_CONNECTION_PORT:-5432}"
+else
+  echo "Unknown database type $OMRS_CONFIG_DATABASE. Using properties for MySQL"
+  OMRS_CONFIG_JDBC_URL_PROTOCOL=mysql
+  OMRS_CONFIG_CONNECTION_DRIVER_CLASS="${OMRS_CONFIG_CONNECTION_DRIVER_CLASS:-com.mysql.jdbc.Driver}"
+  OMRS_CONFIG_CONNECTION_PORT="${OMRS_CONFIG_CONNECTION_PORT:-3306}"
+  OMRS_CONFIG_CONNECTION_ARGS="${OMRS_CONFIG_CONNECTION_ARGS:-?autoReconnect=true&sessionVariables=default_storage_engine=InnoDB&useUnicode=true&characterEncoding=UTF-8}"
+fi
+
+# Build the JDBC URL using the above properties
+OMRS_CONFIG_CONNECTION_URL="${OMRS_CONFIG_CONNECTION_URL:-jdbc:${OMRS_CONFIG_JDBC_URL_PROTOCOL}://${OMRS_CONFIG_CONNECTION_SERVER}:${OMRS_CONFIG_CONNECTION_PORT}/${OMRS_CONFIG_CONNECTION_NAME}${OMRS_CONFIG_CONNECTION_ARGS}${OMRS_CONFIG_CONNECTION_EXTRA_ARGS}}"
 
 echo "Writing out $OMRS_SERVER_PROPERTIES_FILE"
 
@@ -79,7 +106,7 @@ EOF
 
 echo "Waiting for MySQL to initialize..."
 
-/usr/local/tomcat/wait-for-it.sh --timeout=3600 ${OMRS_CONFIG_CONNECTION_SERVER}:3306
+/usr/local/tomcat/wait-for-it.sh --timeout=3600 ${OMRS_CONFIG_CONNECTION_SERVER}:${OMRS_CONFIG_CONNECTION_PORT}
 
 echo "Starting up OpenMRS..."
 
