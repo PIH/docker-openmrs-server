@@ -23,6 +23,7 @@ OMRS_OWA_DIR="$OMRS_DATA_DIR/owa"
 OMRS_CONFIG_DIR="$OMRS_DATA_DIR/configuration"
 
 OMRS_SERVER_PROPERTIES_FILE="$OMRS_HOME/$OMRS_WEBAPP_NAME-server.properties"
+OMRS_RUNTIME_PROPERTIES_FILE="$OMRS_DATA_DIR/$OMRS_WEBAPP_NAME-runtime.properties"
 
 TOMCAT_DIR="/usr/local/tomcat"
 TOMCAT_WEBAPPS_DIR="$TOMCAT_DIR/webapps"
@@ -88,6 +89,11 @@ has_current_openmrs_database=${OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE}
 install_method=${OMRS_CONFIG_INSTALL_METHOD}
 module_web_admin=${OMRS_CONFIG_MODULE_WEB_ADMIN}
 EOF
+
+if [ -f $OMRS_RUNTIME_PROPERTIES_FILE ]; then
+  echo "Found existing runtime properties file at $OMRS_RUNTIME_PROPERTIES_FILE.  Overwriting with $OMRS_SERVER_PROPERTIES_FILE"
+  cp $OMRS_SERVER_PROPERTIES_FILE $OMRS_RUNTIME_PROPERTIES_FILE
+fi
 
 echo "Writing out $TOMCAT_SETENV_FILE file"
 
