@@ -20,7 +20,7 @@ ENV OMRS_JAVA_SERVER_OPTS="-Dfile.encoding=UTF-8 -server -Djava.security.egd=fil
 # These environment variables are used to create the openmrs-server.properties file, which controls how OpenMRS initializes
 ENV OMRS_CONFIG_ADD_DEMO_DATA="false"
 ENV OMRS_CONFIG_ADMIN_USER_PASSWORD="Admin123"
-ENV OMRS_CONFIG_AUTO_UPDATE_DATABASE="false"
+ENV OMRS_CONFIG_AUTO_UPDATE_DATABASE="true"
 # valid values are mysql and postgres
 ENV OMRS_CONFIG_CONNECTION_TYPE="mysql"
 ENV OMRS_CONFIG_CONNECTION_USERNAME="openmrs"
