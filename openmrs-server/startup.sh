@@ -88,6 +88,7 @@ create_tables=${OMRS_CONFIG_CREATE_TABLES}
 has_current_openmrs_database=${OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE}
 install_method=${OMRS_CONFIG_INSTALL_METHOD}
 module_web_admin=${OMRS_CONFIG_MODULE_WEB_ADMIN}
+module.allow_web_admin=${OMRS_CONFIG_MODULE_WEB_ADMIN}
 EOF
 
 if [ -f $OMRS_RUNTIME_PROPERTIES_FILE ]; then
