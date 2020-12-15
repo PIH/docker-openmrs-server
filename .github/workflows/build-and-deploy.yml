@@ -8,20 +8,19 @@ on:
 
 jobs:
   deploy:
+    name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     steps:
-
-      # Check out the code
-    - uses: actions/checkout@v2
-
-      # Perform docker build and push on openmrs-server
-    - name: Build/Push openmrs-server
-      uses: docker/build-push-action@v1
-      with:
-        path: ./openmrs-server
-        username: pihci
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
-        repository: partnersinhealth/openmrs-server
-        tag_with_ref: true
-        tag_with_sha: false
-        add_git_labels: true
+      - name: Check out the repo
+        uses: actions/checkout@v2
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          path: ./openmrs-server
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: isanteplus/isanteplus-packages/isanteplus-server
+          tag_with_ref: true
+          tag_with_sha: false
+          add_git_labels: true
