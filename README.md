@@ -1,6 +1,6 @@
-## openmrs-server
+## isanteplus-server
 
-This repository is responsible for building the "partnersinhealth/openmrs-server" Docker image.
+This repository is responsible for building the "isanteplus/isanteplus-server" Docker image.
 
 ### Usage
 
