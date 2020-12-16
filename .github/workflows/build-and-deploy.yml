@@ -34,7 +34,7 @@ jobs:
         run: |
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
-          mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=/openmrs/downloaded
+          mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=/openmrs
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=/openmrs/distribution/openmrs_webapps
       - name: action-zip
         uses: montudor/action-zip@v0.1.1
