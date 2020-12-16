@@ -43,8 +43,8 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           path: ./openmrs-server
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.RELEASE_USERNAME }}
+          password: ${{ secrets.RELEASE_TOKEN }}
           registry: docker.pkg.github.com
           repository: isanteplus/isanteplus-packages/isanteplus-server
           tag_with_ref: true
