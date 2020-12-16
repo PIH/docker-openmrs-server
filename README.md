@@ -10,6 +10,7 @@ initialization.  The following steps should be taken to use this image:
 
 
 #### Create OpenMRS distribution
+![Build and Deploy](https://github.com/IsantePlus/docker-isanteplus-server/workflows/Build%20and%20Deploy/badge.svg)
 
 An OpenMRS distribution should be assembled on the host machine in the following directory structure:
 
