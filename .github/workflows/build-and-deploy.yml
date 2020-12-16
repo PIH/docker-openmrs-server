@@ -34,12 +34,12 @@ jobs:
         run: |
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
-          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=./openmrs
-          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=./openmrs/distribution/openmrs_webapps
+          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=./
+          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=./openmrs-server/openmrs/distribution/openmrs_webapps
       - name: action-zip
         uses: montudor/action-zip@v0.1.1
         with:
-          args: unzip -qq /openmrs/downloaded/isanteplus-${{ env.VERSION }.zip -d /openmrs/distribution/openmrs_modules
+          args: sudo -Hiu runner unzip -qq ./isanteplus-${{ env.VERSION }.zip -d ./openmrs-server/openmrs/distribution/openmrs_modules
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:
