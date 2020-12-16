@@ -40,9 +40,9 @@ ENV OMRS_DEV_DEBUG_PORT="1044"
 ENV OMRS_WEBAPP_NAME="openmrs"
 
 # Set up volumes.
-# /openmrs/distribution is expected to be mounted into the container with the artifacts making up the distribution
 # /openmrs/data represents the data persisted inside the container to the filesystem for OpenMRS
-VOLUME ["/openmrs/distribution", "/openmrs/data"]
+VOLUME ["/openmrs/data"]
+COPY /openmrs/distribution /openmrs/distribution
 
 # Copy in the start-up scripts
 COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
