@@ -32,14 +32,13 @@ jobs:
           repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/isanteplus/isanteplus-packages", "uniqueVersion": "false" }]'
       - name: Build with Maven
         run: |
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
-          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=./
-          sudo -Hiu runner mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=./openmrs-server/openmrs/distribution/openmrs_webapps
+          mvn dependency:get -q -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
+          mvn dependency:get -q -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
+          sudo -Hiu runner mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=./
+          sudo -Hiu runner mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=./openmrs-server/openmrs/distribution/openmrs_webapps
       - name: action-zip
-        uses: montudor/action-zip@v0.1.1
-        with:
-          args: unzip -qq /home/runner/isanteplus-${{ env.VERSION }}.zip -d /home/runner/openmrs-server/openmrs/distribution/openmrs_modules
+        run: |
+          unzip -qq /home/runner/isanteplus-${{ env.VERSION }}.zip -d /home/runner/openmrs-server/openmrs/distribution/openmrs_modules
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:
