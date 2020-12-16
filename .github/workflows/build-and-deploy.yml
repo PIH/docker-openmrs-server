@@ -39,7 +39,7 @@ jobs:
       - name: action-zip
         uses: montudor/action-zip@v0.1.1
         with:
-          args: sudo -Hiu runner unzip -qq ./isanteplus-${{ env.VERSION }.zip -d ./openmrs-server/openmrs/distribution/openmrs_modules
+          args: sudo -Hiu runner unzip -qq ./isanteplus-${{ env.VERSION }}.zip -d ./openmrs-server/openmrs/distribution/openmrs_modules
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:
