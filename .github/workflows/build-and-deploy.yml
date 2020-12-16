@@ -20,7 +20,8 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - uses: s4u/maven-settings-action@v2.2.0
+      - name: maven-settings-xml-action
+        uses: whelk-io/maven-settings-xml-action@v14
         with:
           servers: |
             [{
@@ -28,11 +29,11 @@ jobs:
                 "username": "${{ secrets.RELEASE_USERNAME }}",
                 "password": "${{ secrets.RELEASE_TOKEN }}"
             }]
-          githubServer: false  
+          repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/isanteplus/isanteplus-packages", "uniqueVersion": "false" }]'
       - name: Build with Maven
         run: |
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DremoteRepositories=https://maven.pkg.github.com/isanteplus/isanteplus-packages
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DremoteRepositories=https://maven.pkg.github.com/isanteplus/isanteplus-packages
+          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
+          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=/openmrs/downloaded
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=/openmrs/distribution/openmrs_webapps
       - name: action-zip
