@@ -3,8 +3,8 @@
 name: Build and Deploy
 
 on:
-  push:
-  create:
+  release:
+    types: [published]
 
 jobs:
   deploy:
