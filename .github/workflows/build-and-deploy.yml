@@ -30,7 +30,7 @@ jobs:
           githubServer: false  
       - name: Build with Maven
         run: |
-          mkdir /openmrs/distribution
+          mkdir -p /openmrs/distribution
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip
           mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=/openmrs/downloaded
