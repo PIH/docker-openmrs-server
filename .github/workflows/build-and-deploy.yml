@@ -31,8 +31,8 @@ jobs:
           githubServer: false  
       - name: Build with Maven
         run: |
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip
-          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war
+          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DremoteRepositories=https://maven.pkg.github.com/isanteplus/isanteplus-packages
+          mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DremoteRepositories=https://maven.pkg.github.com/isanteplus/isanteplus-packages
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=/openmrs/downloaded
           mvn dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=/openmrs/distribution/openmrs_webapps
       - name: action-zip
