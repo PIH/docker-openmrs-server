@@ -20,25 +20,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: maven-settings-xml-action
-        uses: whelk-io/maven-settings-xml-action@v14
-        with:
-          servers: |
-            [{
-                "id": "github-packages",
-                "username": "${{ secrets.RELEASE_USERNAME }}",
-                "password": "${{ secrets.RELEASE_TOKEN }}"
-            }]
-          repositories: '[{ "id": "github-packages", "url": "https://maven.pkg.github.com/isanteplus/isanteplus-packages", "uniqueVersion": "false" }]'
-      - name: Build with Maven
-        run: |
-          mvn dependency:get -q -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DrepositoryId=github-packages
-          mvn dependency:get -q -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DrepositoryId=github-packages
-          sudo -Hiu runner mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:zip -DoutputDirectory=./
-          sudo -Hiu runner mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${VERSION}:war -DoutputDirectory=./openmrs-server/openmrs/distribution/openmrs_webapps
-      - name: action-zip
-        run: |
-          unzip -qq /home/runner/isanteplus-${{ env.VERSION }}.zip -d /home/runner/openmrs-server/openmrs/distribution/openmrs_modules
       - name: Push to GitHub Packages
         uses: docker/build-push-action@v1
         with:

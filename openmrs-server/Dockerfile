@@ -1,7 +1,37 @@
-FROM tomcat:7-jre8
+FROM maven:3.6-jdk-8 as download
+ARG USERNAME
+ARG TOKEN
+ARG ISANTEPLUS_VERSION
 
-# Take some initial steps to improve overall security, size, and functionality of the container
-# This includes updating packages and removing all of the default Tomcat webapps
+RUN apt-get update; \
+	apt-get install -y --no-install-recommends \
+		rename
+
+WORKDIR /
+RUN mkdir -p /root/.m2 \
+    && mkdir /root/.m2/repository
+COPY settings.xml.template .
+RUN sed -e "s/\${your-github-username}/$USERNAME/" -e "s/\${your-github-token}/$TOKEN/" settings.xml.template | tee /root/.m2/settings.xml
+
+WORKDIR /root/openmrs/distribution
+RUN mkdir openmrs_modules openmrs_webapps
+
+RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DrepositoryId=github-packages
+RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DrepositoryId=github-packages
+RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DoutputDirectory=./openmrs_modules
+RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DoutputDirectory=./openmrs_webapps
+
+# TODO: Fix artifact names to not have a dash in these two projects
+RUN rename 's/m2sys-(.+).omod$/m2sys-biometrics-$1\.omod/' *.omod
+RUN rename 's/outgoing-(.+).omod$/outgoing-message-exceptions-$1\.omod/' *.omod
+
+WORKDIR /root/openmrs/distribution/openmrs_modules
+RUN unzip -j -qq isanteplus-${ISANTEPLUS_VERSION}.zip -d ./ && rm isanteplus-${ISANTEPLUS_VERSION}.zip
+
+FROM tomcat:7-jre8 as build
+
+## Take some initial steps to improve overall security, size, and functionality of the container
+## This includes updating packages and removing all of the default Tomcat webapps
 
 RUN apt-get update && apt-get install -y \
        zip \
@@ -42,7 +72,7 @@ ENV OMRS_WEBAPP_NAME="openmrs"
 # Set up volumes.
 # /openmrs/data represents the data persisted inside the container to the filesystem for OpenMRS
 VOLUME ["/openmrs/data"]
-COPY /openmrs/distribution /openmrs/distribution
+COPY --from=download /root .
 
 # Copy in the start-up scripts
 COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh

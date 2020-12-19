@@ -37,6 +37,12 @@ services:
 
   isanteplus:
     restart: "always"
+    build:
+      context: ./openmrs-server
+      args:
+        USERNAME: ${RELEASE_USERNAME}
+        TOKEN: ${RELEASE_TOKEN}
+        ISANTEPLUS_VERSION: '2.6.0'
     container_name: isanteplus
     depends_on:
       - mysql
@@ -53,4 +59,9 @@ services:
       DB_AUTO_UPDATE: 'false'
       MODULE_WEB_ADMIN: 'true'
       _JAVA_OPTIONS: -Xmx1g -Xms1g # change this depending on the server config
+    entrypoint: /bin/bash
+    tty: true
+    stdin_open: true
+
+
 
