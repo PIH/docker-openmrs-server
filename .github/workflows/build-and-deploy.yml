@@ -12,7 +12,7 @@ jobs:
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     env:
-      VERSION: 2.6.0
+      ISANTEPLUS_VERSION: 2.7.1-SNAPSHOT
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2

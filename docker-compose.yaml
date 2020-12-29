@@ -43,7 +43,7 @@ services:
       args:
         USERNAME: ${RELEASE_USERNAME}
         TOKEN: ${RELEASE_TOKEN}
-        ISANTEPLUS_VERSION: '2.6.0'
+        ISANTEPLUS_VERSION: '2.7.1-SNAPSHOT'
     container_name: isanteplus
     depends_on:
       - mysql
