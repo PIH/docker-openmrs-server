@@ -13,11 +13,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '2.1'
+version: '3.8'
 services:
   mysql:
     image: mysql:5.7
-    command: "mysqld --character-set-server=utf8 --collation-server=utf8_general_ci"
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --sql_mode=""
     restart: always
     ports:
       - "3306:3306"
@@ -34,7 +34,8 @@ services:
       #- ./utils/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
       #- ./data:/var/lib/mysql
       - ./db:/docker-entrypoint-initdb.d # will execute any sql dumped here
-
+    networks:
+      - isanteplus
   isanteplus:
     restart: "always"
     build:
@@ -47,21 +48,22 @@ services:
     depends_on:
       - mysql
     ports:
-      - "8099:8080"
+      - "8080:8080"
     healthcheck:
       test: "exit 0"
     environment:
       DB_DATABASE: 'openmrs'
-      DB_HOST: isanteplus-fhir-mysql
+      DB_HOST: isanteplus-mysql
       DB_USERNAME: 'mysqluser'
       DB_PASSWORD: 'mysqlpw'
       DB_CREATE_TABLES: 'false'
       DB_AUTO_UPDATE: 'false'
       MODULE_WEB_ADMIN: 'true'
+      OMRS_CONFIG_CONNECTION_SERVER: isanteplus-mysql
       _JAVA_OPTIONS: -Xmx1g -Xms1g # change this depending on the server config
-    entrypoint: /bin/bash
-    tty: true
-    stdin_open: true
-
+    networks:
+      - isanteplus
+networks:
+  isanteplus:
 
 

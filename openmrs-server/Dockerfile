@@ -72,7 +72,7 @@ ENV OMRS_WEBAPP_NAME="openmrs"
 # Set up volumes.
 # /openmrs/data represents the data persisted inside the container to the filesystem for OpenMRS
 VOLUME ["/openmrs/data"]
-COPY --from=download /root .
+COPY --from=download /root /
 
 # Copy in the start-up scripts
 COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
