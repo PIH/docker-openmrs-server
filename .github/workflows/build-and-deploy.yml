@@ -45,18 +45,3 @@ jobs:
           cache-from: type=registry,ref=isanteplus/isanteplus-packages/isanteplus-db:latest
           cache-to: type=inline
           tags: isanteplus/isanteplus-packages/isanteplus-db:latest
-
-
-
-
-jobs:
-  login:
-    runs-on: ubuntu-latest
-    steps:
-      -
-        name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
