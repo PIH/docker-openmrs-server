@@ -10,7 +10,7 @@ RUN apt-get update; \
 WORKDIR /
 RUN mkdir -p /root/.m2 \
     && mkdir /root/.m2/repository
-COPY settings.xml.template .
+COPY ./resources/settings.xml.template .
 RUN sed -e "s/\${your-github-username}/$USERNAME/" -e "s/\${your-github-token}/$TOKEN/" settings.xml.template | tee /root/.m2/settings.xml
 
 WORKDIR /root/openmrs/distribution
@@ -27,6 +27,10 @@ RUN rename 's/outgoing-(.+).omod$/outgoing-message-exceptions-$1\.omod/' *.omod
 
 WORKDIR /root/openmrs/distribution/openmrs_modules
 RUN unzip -j -qq isanteplus-${ISANTEPLUS_VERSION}.zip -d ./ && rm isanteplus-${ISANTEPLUS_VERSION}.zip
+
+# TODO: remove when addresshierarchy situation is resolved
+RUN rm addresshierarchy*
+RUN wget https://github.com/IsantePlus/isanteplus_installation/raw/main/modules/addresshierarchy-2.11.0-SNAPSHOT.omod
 
 FROM tomcat:7-jre8 as build
 

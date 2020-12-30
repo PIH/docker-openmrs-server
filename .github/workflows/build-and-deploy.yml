@@ -12,7 +12,9 @@ jobs:
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     env:
-      ISANTEPLUS_VERSION: 2.7.1-SNAPSHOT
+      ISANTEPLUS_VERSION: 2.7.1
+      USERNAME: ${{ secrets.RELEASE_USERNAME }}
+      TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -20,14 +22,27 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Push to GitHub Packages
+      - name: Push isanteplus to GitHub Packages
         uses: docker/build-push-action@v1
         with:
-          path: ./openmrs-server
+          context: ./
+          file: ./openmrs-server/Dockerfile
           username: ${{ secrets.RELEASE_USERNAME }}
           password: ${{ secrets.RELEASE_TOKEN }}
           registry: docker.pkg.github.com
           repository: isanteplus/isanteplus-packages/isanteplus-server
+          tag_with_ref: true
+          tag_with_sha: false
+          add_git_labels: true
+      - name: Push isanteplus-mysql to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          context: ./
+          file: ./db/Dockerfile
+          username: ${{ secrets.RELEASE_USERNAME }}
+          password: ${{ secrets.RELEASE_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: isanteplus/isanteplus-packages/isanteplus-db
           tag_with_ref: true
           tag_with_sha: false
           add_git_labels: true
