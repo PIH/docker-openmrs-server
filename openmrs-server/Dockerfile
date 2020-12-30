@@ -79,13 +79,13 @@ VOLUME ["/openmrs/data"]
 COPY --from=download /root /
 
 # Copy in the start-up scripts
-COPY wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
-COPY startup.sh /usr/local/tomcat/startup.sh
+COPY ./resources/wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
+COPY ./resources/startup.sh /usr/local/tomcat/startup.sh
 RUN chmod +x /usr/local/tomcat/wait-for-it.sh
 RUN chmod +x /usr/local/tomcat/startup.sh
 
 # Add Dockerfile and commit info for documentation
-ADD Dockerfile /openmrs/docker
+ADD ./openmrs-server/Dockerfile /openmrs/docker
 
 EXPOSE 8080
 

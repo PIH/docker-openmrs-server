@@ -103,6 +103,9 @@ RUN { \
 
 VOLUME /var/lib/mysql
 
+# Add Dockerfile and commit info for documentation
+ADD ./db/Dockerfile /openmrs/docker
+
 COPY ./resources/docker-entrypoint.sh /usr/local/bin/
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
