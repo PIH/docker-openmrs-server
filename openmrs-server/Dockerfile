@@ -13,24 +13,33 @@ RUN mkdir -p /root/.m2 \
 COPY ./resources/settings.xml.template .
 RUN sed -e "s/\${your-github-username}/$USERNAME/" -e "s/\${your-github-token}/$TOKEN/" settings.xml.template | tee /root/.m2/settings.xml
 
+WORKDIR /root
+RUN git clone --depth 1 --branch ${ISANTEPLUS_VERSION} https://github.com/IsantePlus/openmrs-distro-isanteplus.git
+WORKDIR /root/openmrs-distro-isanteplus
+RUN mvn clean package -U -B
+
 WORKDIR /root/openmrs/distribution
 RUN mkdir openmrs_modules openmrs_webapps
+RUN cp /root/openmrs-distro-isanteplus/package/target/distro/web/modules openmrs_modules/
+RUN cp /root/openmrs-distro-isanteplus/package/target/distro/web/openmrs.war openmrs_webapps/
 
-RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DrepositoryId=github-packages
-RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DrepositoryId=github-packages
-RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DoutputDirectory=./openmrs_modules
-RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DoutputDirectory=./openmrs_webapps
+# TODO: Fix distro package to allow download of published package
+# RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DrepositoryId=github-packages
+# RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DrepositoryId=github-packages
+# RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DoutputDirectory=./openmrs_modules
+# RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:war -DoutputDirectory=./openmrs_webapps
+
+WORKDIR /root/openmrs/distribution/openmrs_modules
 
 # TODO: Fix artifact names to not have a dash in these two projects
 RUN rename 's/m2sys-(.+).omod$/m2sys-biometrics-$1\.omod/' *.omod
 RUN rename 's/outgoing-(.+).omod$/outgoing-message-exceptions-$1\.omod/' *.omod
 
-WORKDIR /root/openmrs/distribution/openmrs_modules
-RUN unzip -j -qq isanteplus-${ISANTEPLUS_VERSION}.zip -d ./ && rm isanteplus-${ISANTEPLUS_VERSION}.zip
-
-# TODO: remove when addresshierarchy situation is resolved
+# TODO: remove when addresshierarchy, patientflags, situation is resolved
 RUN rm addresshierarchy*
 RUN wget https://github.com/IsantePlus/isanteplus_installation/raw/main/modules/addresshierarchy-2.11.0-SNAPSHOT.omod
+RUN rm patientflags*
+RUN wget https://github.com/IsantePlus/isanteplus_installation/raw/main/modules/patientflags-2.0.0-SNAPSHOT.omod
 
 FROM tomcat:7-jre8 as build
 

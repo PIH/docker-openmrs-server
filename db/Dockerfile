@@ -1,19 +1,12 @@
-FROM maven:3.6-jdk-8 as download
-
-ARG USERNAME
-ARG TOKEN
-ARG ISANTEPLUS_VERSION
+FROM alpine/git as download
 
 WORKDIR /
-RUN mkdir -p /root/.m2 \
-    && mkdir /root/.m2/repository
-COPY ./resources/settings.xml.template .
-RUN sed -e "s/\${your-github-username}/$USERNAME/" -e "s/\${your-github-token}/$TOKEN/" settings.xml.template | tee /root/.m2/settings.xml
+
+RUN git clone https://github.com/IsantePlus/openmrs-distro-isanteplus
 
 WORKDIR /db
 
-RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:sql -DrepositoryId=github-packages
-RUN mvn -q dependency:copy -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:sql -DoutputDirectory=/db
+RUN mv /openmrs-distro-isanteplus/package/src/main/resources/openmrs-distro.sql /db/
 
 FROM debian:buster-slim as db
 
@@ -45,8 +38,7 @@ RUN set -eux; \
 	gosu --version; \
 	gosu nobody true
 
-WORKDIR /docker-entrypoint-initdb.d
-COPY --from=download /db ./
+COPY --from=download /db/* /docker-entrypoint-initdb.d/
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
 # for MYSQL_RANDOM_ROOT_PASSWORD
@@ -107,6 +99,8 @@ VOLUME /var/lib/mysql
 ADD ./db/Dockerfile /openmrs/docker
 
 COPY ./resources/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 RUN ln -s usr/local/bin/docker-entrypoint.sh /entrypoint.sh # backwards compat
 ENTRYPOINT ["docker-entrypoint.sh"]
 

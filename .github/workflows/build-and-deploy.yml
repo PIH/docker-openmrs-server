@@ -12,7 +12,7 @@ jobs:
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
     env:
-      ISANTEPLUS_VERSION: 2.7.1
+      ISANTEPLUS_VERSION: 2.8.0
       USERNAME: ${{ secrets.RELEASE_USERNAME }}
       TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
@@ -28,7 +28,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ secrets.RELEASE_USERNAME }}
-          password: ${{ secrets.RELEASE_TOKEN }}
+          password: ${{ secrets.CONTAINER_PAT }}
       - name: Push isanteplus to GitHub Packages
         uses: docker/build-push-action@v2
         with:

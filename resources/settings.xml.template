@@ -14,14 +14,14 @@
     <profile>
       <repositories>
         <repository>
-          <id>github-packages</id>
-          <name>Github iSantePlus Packages</name>
-          <url>https://maven.pkg.github.com/isanteplus/isanteplus-packages</url>
-        </repository>
-        <repository>
           <id>archetype</id>
           <name>OpenMRS Nexus Repository</name>
           <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+        </repository>
+        <repository>
+          <id>github-packages</id>
+          <name>Github iSantePlus Packages</name>
+          <url>https://maven.pkg.github.com/isanteplus/isanteplus-packages</url>
         </repository>
         <repository>
           <id>openmrs-repo-thirdparty</id>
