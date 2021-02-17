@@ -23,6 +23,7 @@ services:
       - data:/var/lib/mysql
     networks:
       - isanteplus
+    
   isanteplus:
     restart: unless-stopped
     build:
@@ -60,9 +61,6 @@ services:
       - ./openmrs-server/openmrs/distribution:/openmrs/distribution
     networks:
       - isanteplus
-    tty: true
-    stdin_open: true
-    entrypoint: bash
 
 networks:
   isanteplus:

@@ -28,7 +28,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ secrets.RELEASE_USERNAME }}
-          password: ${{ secrets.CONTAINER_PAT }}
+          password: ${{ secrets.RELEASE_TOKEN }}
       - name: Push isanteplus to GitHub Packages
         uses: docker/build-push-action@v2
         with:

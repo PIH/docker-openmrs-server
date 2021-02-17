@@ -1,18 +1,44 @@
 version: '3.8'
 services:
-  mysql:
+  isanteplus:
+    container_name: isanteplus-demo
+    hostname: isanteplus-demo
     build:
       context: ./
-      dockerfile: ./db/Dockerfile
+      dockerfile: ./openmrs-server/Dockerfile
       args:
         USERNAME: ${RELEASE_USERNAME}
         TOKEN: ${RELEASE_TOKEN}
-        ISANTEPLUS_VERSION: ${ISANTEPLUS_VERSION}
-    #command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --sql_mode=""
-    restart: always
+        ISANTEPLUS_VERSION: 2.8.0
+    restart: unless-stopped
+    env_file:
+        - ./resources/openmrs-server.env
     ports:
-      - "${MYSQL_PORT}:3306"
+      - "8081:8080"
+      - "1044:8000"
+    volumes:
+      - openmrs-data:/openmrs/data
+    networks:
+      - isanteplus
+    healthcheck:
+      test: "curl -sSk http://localhost:8080/openmrs || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 3   
+    depends_on: 
+      mysql:
+        condition: service_healthy
+    environment:
+      USERNAME: ${RELEASE_USERNAME}
+      TOKEN: ${RELEASE_TOKEN}
+      ISANTEPLUS_VERSION: 2.8.0
+
+  mysql:
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --sql_mode=""
+    image: ghcr.io/isanteplus/isanteplus-db:0.1.0
+    restart: unless-stopped
     container_name: isanteplus-mysql
+    hostname: isanteplus-mysql
     healthcheck:
       test: "exit 0"
     environment:
@@ -23,46 +49,15 @@ services:
       - MYSQL_ROOT_HOST=%    # Allow docker containers to connect to mysql
     volumes:
       - ./db/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
-      - data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     networks:
       - isanteplus
-    entrypoint: /bin/bash
-    tty: true
-    stdin_open: true
-  isanteplus:
-    restart: "always"
-    build:
-      context: ./
-      dockerfile: ./openmrs-server/Dockerfile
-      args:
-        USERNAME: ${RELEASE_USERNAME}
-        TOKEN: ${RELEASE_TOKEN}
-        ISANTEPLUS_VERSION: ${ISANTEPLUS_VERSION}
-    container_name: isanteplus
-    depends_on:
-      - mysql
     ports:
-      - "${ISANTEPLUS_PORT}:8080"
-    healthcheck:
-      test: "exit 0"
-    environment:
-      DB_DATABASE: 'openmrs'
-      DB_HOST: isanteplus-mysql
-      DB_USERNAME: 'mysqluser'
-      DB_PASSWORD: 'mysqlpw'
-      DB_CREATE_TABLES: 'false'
-      DB_AUTO_UPDATE: 'false'
-      MODULE_WEB_ADMIN: 'true'
-      OMRS_CONFIG_CONNECTION_SERVER: isanteplus-mysql
-      _JAVA_OPTIONS: -Xmx1g -Xms1g # change this depending on the server config
-    networks:
-      - isanteplus
-    entrypoint: /bin/bash
-    tty: true
-    stdin_open: true
+      - 3306:3306
 networks:
   isanteplus:
 volumes:
-  data:
+  mysql-data:
+  openmrs-data:
 
 

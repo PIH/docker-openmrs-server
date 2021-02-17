@@ -20,8 +20,8 @@ RUN mvn clean package -U -B
 
 WORKDIR /root/openmrs/distribution
 RUN mkdir openmrs_modules openmrs_webapps
-RUN cp /root/openmrs-distro-isanteplus/package/target/distro/web/modules openmrs_modules/
-RUN cp /root/openmrs-distro-isanteplus/package/target/distro/web/openmrs.war openmrs_webapps/
+RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/modules/* openmrs_modules
+RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/openmrs.war openmrs_webapps/
 
 # TODO: Fix distro package to allow download of published package
 # RUN mvn dependency:get -Dartifact=org.openmrs.distro:isanteplus:${ISANTEPLUS_VERSION}:zip -DrepositoryId=github-packages
@@ -34,6 +34,8 @@ WORKDIR /root/openmrs/distribution/openmrs_modules
 # TODO: Fix artifact names to not have a dash in these two projects
 RUN rename 's/m2sys-(.+).omod$/m2sys-biometrics-$1\.omod/' *.omod
 RUN rename 's/outgoing-(.+).omod$/outgoing-message-exceptions-$1\.omod/' *.omod
+RUN rename 's/xds-(.+).omod$/xds-sender-$1\.omod/' *.omod
+RUN rename 's/santedb-(.+).omod$/santedb-mpiclient-$1\.omod/' *.omod
 
 # TODO: remove when addresshierarchy, patientflags, situation is resolved
 RUN rm addresshierarchy*
