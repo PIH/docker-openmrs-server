@@ -1,9 +1,9 @@
-## isanteplus-server
+# iSantePlus Docker Image
+This repository is responsible for building the "ghcr.io/isanteplus/isanteplus" Docker image and the isanteplus mysql database image ghcr.io/isanteplus/isanteplus-mysql.
 
-This repository is responsible for building the "isanteplus/isanteplus-server" Docker image.
+## Usage
 
-### Usage
-
+### Build and Publish iSantePlus Image
 ```sh
 docker-compose build --no-cache isanteplus
 docker tag <image hash> ghcr.io/isanteplus/isanteplus:<version>
@@ -12,21 +12,33 @@ docker push ghcr.io/isanteplus/isanteplus:latest
 docker push ghcr.io/isanteplus/isanteplus:<version>
 ```
 
-### Tags
+### Use Published Image - Docker Compose
 
-Typically branches will represent different server versions.  For example, openmrs-server images for 1.x require
-Tomcat 7 and Java 7.  Images that support later OpenMRS versions require Java 8.
+`docker-compose.yml`
+```json
+isanteplus-demo:
+    container_name: isanteplus-demo
+    hostname: isanteplus-demo
+    image: ghcr.io/isanteplus/isanteplus:latest
+    restart: unless-stopped
+    env_file:
+        - ./openmrs/isanteplus_demo/openmrs-server.env
+    volumes:
+      - openmrs-data:/openmrs/data
+    networks:
+      - sedish
+```
 
-This repository will automatically build and push new docker images for all pushed commits and tags as follows:
-
-#### latest
-
-Every commit to master will result in a new tag pushed to DockerHub named "latest"
-
-#### tags
-
-Any time a tag is pushed to github, this will result in a new tag pushed to Dockerhub with the same name
-
-#### branches
-
-Any time a commit is pushed to a non-master branch, a new tag is pushed to Dockerhub with this branch name
+`openmrs-server.env`
+```
+OMRS_JAVA_MEMORY_OPTS=-Xmx2048m -Xms1024m -XX:NewSize=128m
+OMRS_CONFIG_CONNECTION_SERVER=
+OMRS_CONFIG_CREATE_DATABASE_USER=false
+OMRS_CONFIG_CREATE_TABLES=true
+OMRS_CONFIG_ADD_DEMO_DATA=false
+OMRS_CONFIG_CONNECTION_URL=
+OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE=true
+OMRS_JAVA_SERVER_OPTS=-Dfile.encoding=UTF-8 -server -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Djava.awt.headlesslib=true
+OMRS_CONFIG_CONNECTION_USERNAME=
+OMRS_CONFIG_CONNECTION_PASSWORD=
+```
