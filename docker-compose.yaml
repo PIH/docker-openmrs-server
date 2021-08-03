@@ -19,7 +19,7 @@ services:
       - MYSQL_PASSWORD=mysqlpw
       - MYSQL_ROOT_HOST=%    # Allow docker containers to connect to mysql
     volumes:
-      - ./db/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
+      # - ./db/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
       - data:/var/lib/mysql
     networks:
       - isanteplus
