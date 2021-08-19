@@ -14,7 +14,7 @@ COPY ./resources/settings.xml.template .
 RUN sed -e "s/\${your-github-username}/$USERNAME/" -e "s/\${your-github-token}/$TOKEN/" settings.xml.template | tee /root/.m2/settings.xml
 
 WORKDIR /root
-RUN git clone --depth 1 --branch ${ISANTEPLUS_VERSION} https://github.com/IsantePlus/openmrs-distro-isanteplus.git
+RUN git clone --depth 1 --branch $ISANTEPLUS_VERSION https://github.com/IsantePlus/openmrs-distro-isanteplus.git
 WORKDIR /root/openmrs-distro-isanteplus
 RUN mvn clean package -U -B
 
