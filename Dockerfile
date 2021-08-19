@@ -96,7 +96,7 @@ RUN chmod +x /usr/local/tomcat/wait-for-it.sh
 RUN chmod +x /usr/local/tomcat/startup.sh
 
 # Add Dockerfile and commit info for documentation
-ADD ./openmrs-server/Dockerfile /openmrs/docker
+ADD ./Dockerfile /openmrs/docker
 
 EXPOSE 8080
 
