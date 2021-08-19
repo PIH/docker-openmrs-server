@@ -1,4 +1,7 @@
 # iSantePlus Docker Image
+
+[![Build and Deploy](https://github.com/IsantePlus/docker-isanteplus-server/actions/workflows/build-and-deploy.yml/badge.svg)](https://github.com/IsantePlus/docker-isanteplus-server/actions/workflows/build-and-deploy.yml)
+
 This repository is responsible for building the "ghcr.io/isanteplus/isanteplus" Docker image and the isanteplus mysql database image ghcr.io/isanteplus/isanteplus-mysql.
 
 ## Usage
