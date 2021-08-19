@@ -13,7 +13,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-
+  ISANTEPLUS_VERSION: 2.9.1
 
 jobs:
   deploy:
