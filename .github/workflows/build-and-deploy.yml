@@ -18,9 +18,6 @@ jobs:
   deploy:
     name: Push Docker image to GitHub Packages
     runs-on: ubuntu-latest
-    env:
-      USERNAME: ${{ secrets.RELEASE_USERNAME }}
-      TOKEN: ${{ secrets.RELEASE_TOKEN }}
     steps:
       -
         name: Checkout code
