@@ -24,12 +24,7 @@ services:
     
   isanteplus:
     restart: unless-stopped
-    build:
-      context: ./
-      args:
-        USERNAME: ${RELEASE_USERNAME}
-        TOKEN: ${RELEASE_TOKEN}
-        ISANTEPLUS_VERSION: ${ISANTEPLUS_VERSION}
+    image: isanteplus/isanteplus-server:test
     container_name: isanteplus
     hostname: isanteplus
     ports:
