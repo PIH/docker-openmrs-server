@@ -1,0 +1,43 @@
+version: '2'
+
+services:
+  db:
+    image: library/mysql:8
+    command: "mysqld \
+              --character-set-server=utf8 \
+              --collation-server=utf8_general_ci \
+              --max_allowed_packet=1G \
+              --default-authentication-plugin=mysql_native_password \
+              --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
+    environment:
+      MYSQL_DATABASE: "openmrs"
+      MYSQL_ROOT_PASSWORD: "root"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  server:
+    image: partnersinhealth/openmrs-server:latest
+    depends_on:
+      - db
+    environment:
+      OMRS_CONFIG_CONNECTION_SERVER: "db"
+      OMRS_CONFIG_CONNECTION_ROOT_PASSWORD: "root"
+      OMRS_CONFIG_CONNECTION_USERNAME: "root"
+      OMRS_CONFIG_CONNECTION_PASSWORD: "root"
+      OMRS_CONFIG_CONNECTION_EXTRA_ARGS: "&autoReconnect=true&sessionVariables=default_storage_engine%3DInnoDB&useUnicode=true&characterEncoding=UTF-8&useSSL=false&requireSSL=false"
+      OMRS_CONFIG_AUTO_UPDATE_DATABASE: "true"
+      OMRS_CONFIG_CREATE_TABLES: "true"
+      OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE: "false"
+      OMRS_DEV_DEBUG_PORT: "1044"
+    volumes:
+      - ./distribution:/openmrs/distribution
+      - openmrs-data:/openmrs/data
+    ports:
+      - "8080:8080"
+      - "5000:1044"
+
+volumes:
+  openmrs-data:
+  mysql-data:
