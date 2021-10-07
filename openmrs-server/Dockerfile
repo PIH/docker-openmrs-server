@@ -1,4 +1,4 @@
-FROM tomcat:7-jre8
+FROM tomcat:9-jdk8
 
 # Take some initial steps to improve overall security, size, and functionality of the container
 # This includes updating packages and removing all of the default Tomcat webapps
@@ -25,7 +25,10 @@ ENV OMRS_CONFIG_AUTO_UPDATE_DATABASE="true"
 ENV OMRS_CONFIG_CONNECTION_TYPE="mysql"
 ENV OMRS_CONFIG_CONNECTION_USERNAME="openmrs"
 ENV OMRS_CONFIG_CONNECTION_PASSWORD="openmrs"
+ENV OMRS_CONFIG_CONNECTION_ROOT_USERNAME="root"
+ENV OMRS_CONFIG_CONNECTION_ROOT_PASSWORD="root"
 ENV OMRS_CONFIG_CONNECTION_SERVER="localhost"
+ENV OMRS_CONFIG_CONNECTION_PORT="3306"
 ENV OMRS_CONFIG_CONNECTION_NAME="openmrs"
 ENV OMRS_CONFIG_CREATE_DATABASE_USER="false"
 ENV OMRS_CONFIG_CREATE_TABLES="false"
