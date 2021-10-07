@@ -39,6 +39,7 @@ rm -fR $OMRS_OWA_DIR
 rm -fR $OMRS_CONFIG_DIR
 rm -fR $TOMCAT_WORK_DIR
 rm -fR $TOMCAT_TEMP_DIR
+mkdir $TOMCAT_TEMP_DIR
 
 echo "Loading artifacts into appropriate locations"
 
