@@ -1,7 +1,7 @@
 FROM maven:3.6-jdk-8 as download
 ARG USERNAME
 ARG TOKEN
-ARG ISANTEPLUS_VERSION
+ARG ISANTEPLUS_VERSION=main
 
 RUN apt-get update; \
 	apt-get install -y --no-install-recommends \

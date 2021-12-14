@@ -3,17 +3,17 @@
 name: Build and Deploy
 
 on:
+  pull_request:
+    branches: [main]
   release:
     types: [published]
   push:
-    branches:
-      - "main"
+    branches: [main]
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  ISANTEPLUS_VERSION: 2.9.1
 
 jobs:
   deploy:
@@ -49,7 +49,6 @@ jobs:
           context: .
           push: true
           build-args: |
-            ISANTEPLUS_VERSION=${{ env.ISANTEPLUS_VERSION }}
             USERNAME=${{ secrets.RELEASE_USERNAME }}
             TOKEN=${{ secrets.RELEASE_TOKEN }}
           tags: ${{ steps.meta.outputs.tags }}
