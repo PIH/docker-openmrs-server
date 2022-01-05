@@ -1,7 +1,7 @@
 FROM maven:3.6-jdk-8 as download
 ARG USERNAME
 ARG TOKEN
-ARG ISANTEPLUS_VERSION=main
+ARG ISANTEPLUS_VERSION=v2.0.1
 
 RUN apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -20,6 +20,9 @@ RUN mvn clean package -U -B
 
 WORKDIR /root/openmrs/distribution
 RUN mkdir openmrs_modules openmrs_webapps
+
+VOLUME /root/openmrs/distribution/openmrs_modules
+
 RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/modules/* openmrs_modules
 RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/openmrs.war openmrs_webapps/
 

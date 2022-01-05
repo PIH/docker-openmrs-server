@@ -47,6 +47,8 @@ services:
       OMRS_DEV_DEBUG_PORT: 8000
     volumes:
       - openmrs-data:/openmrs/data
+      - ./modules:/root/openmrs/distribution/openmrs_modules
+
     networks:
       - isanteplus
 
