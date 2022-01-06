@@ -21,8 +21,6 @@ RUN mvn clean package -U -B
 WORKDIR /root/openmrs/distribution
 RUN mkdir openmrs_modules openmrs_webapps
 
-VOLUME /root/openmrs/distribution/openmrs_modules
-
 RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/modules/* openmrs_modules
 RUN cp -r /root/openmrs-distro-isanteplus/package/target/distro/web/openmrs.war openmrs_webapps/
 
@@ -92,6 +90,10 @@ ENV OMRS_WEBAPP_NAME="openmrs"
 VOLUME ["/openmrs/data"]
 COPY --from=download /root /
 
+VOLUME /openmrs/distribution/openmrs_modules
+
+VOLUME /custom_modules
+
 # Copy in the start-up scripts
 COPY ./resources/wait-for-it.sh /usr/local/tomcat/wait-for-it.sh
 COPY ./resources/startup.sh /usr/local/tomcat/startup.sh
@@ -103,4 +105,4 @@ ADD ./Dockerfile /openmrs/docker
 
 EXPOSE 8080
 
-CMD ["/usr/local/tomcat/startup.sh"]
+ENTRYPOINT ls /custom_modules && /usr/local/tomcat/startup.sh
