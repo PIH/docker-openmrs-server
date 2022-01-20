@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mysql:
-    image: ghcr.io/isanteplus/isanteplus-db:0.1.0
+    image: ghcr.io/isanteplus/isanteplus-db:latest
     command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci --sql_mode=""
     restart: unless-stopped
     container_name: isanteplus-mysql
@@ -17,19 +17,13 @@ services:
       - MYSQL_PASSWORD=mysqlpw
       - MYSQL_ROOT_HOST=%    # Allow docker containers to connect to mysql
     volumes:
-      # - ./db/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
-      - data:/var/lib/mysql
-    networks:
-      - isanteplus
+      - ./db/mysql.cnf:/etc/mysql/conf.d/custom.cnf  # mysql config preconfigured to allow binlog/debezium
+      - /var/lib/mysql
     
+  # Assumes image is built and tagged as `isanteplus/docker-isanteplus-server:ci`
   isanteplus:
     restart: unless-stopped
-    build:
-      context: ./
-      args:
-        USERNAME: ${RELEASE_USERNAME}
-        TOKEN: ${RELEASE_TOKEN}
-        ISANTEPLUS_VERSION: ${ISANTEPLUS_VERSION}
+    image: isanteplus/docker-isanteplus-server:ci
     container_name: isanteplus
     hostname: isanteplus
     ports:
@@ -40,25 +34,41 @@ services:
       OMRS_JAVA_MEMORY_OPTS: -Xmx2048m -Xms1024m -XX:NewSize=128m
       OMRS_CONFIG_CONNECTION_SERVER: isanteplus-mysql
       OMRS_CONFIG_CREATE_DATABASE_USER: 'false'
-      OMRS_CONFIG_CREATE_TABLES: 'true'
+      OMRS_CONFIG_CREATE_TABLES: 'false'
       OMRS_CONFIG_ADD_DEMO_DATA: 'false'
       OMRS_CONFIG_CONNECTION_URL: jdbc:mysql://isanteplus-mysql:3306/openmrs?autoReconnect=true
       OMRS_CONFIG_HAS_CURRENT_OPENMRS_DATABASE: 'true'
       OMRS_JAVA_SERVER_OPTS: -Dfile.encoding=UTF-8 -server -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Djava.awt.headlesslib=true
       OMRS_CONFIG_CONNECTION_USERNAME: mysqluser
       OMRS_CONFIG_CONNECTION_PASSWORD: mysqlpw
-      JPDA_ADDRESS: 0.0.0.0:8000
-      JPDA_TRANSPORT: dt_socket
-      OMRS_DEV_DEBUG_PORT: 8000
+      # JPDA_ADDRESS: 0.0.0.0:8000
+      # JPDA_TRANSPORT: dt_socket
+      # OMRS_DEV_DEBUG_PORT: 1044
     volumes:
-      - openmrs-data:/openmrs/data
+      - /openmrs/data
+      - ./custom-modules:/root/openmrs/distribution/openmrs_modules
+
+
+  # QA Framework
+  qa:
+    image: ghcr.io/isanteplus/isanteplus-qaframework:latest
+    container_name: qa
+    environment:
+      - ISANTEPLUS_URL=http://isanteplus:8080/openmrs
+      - ISANTEPLUS_USER=admin
+      - ISANTEPLUS_PW=Admin123
+      - REMOTE_URL_CHROME=http://chrome:4444/wd/hub
+      - TEST_OPTIONS="-Dcucumber.filter.tags=@login"
+  chrome:
+    image: selenium/standalone-chrome:latest
+    hostname: chrome
+    container_name: chrome
+  
+  # Newman Tests
+  newman:
+    image: postman/newman
+    volumes:
+      - ./.postman:/.postman
+    entrypoint: newman run $POSTMAN_COLLECTION -e /.postman/postman_env.ci.json --insecure --timeout-request 20000 --delay-request 1000
     networks:
-      - isanteplus
-
-networks:
-  isanteplus:
-volumes:
-  data:
-  openmrs-data:
-
-
+      - sedish
